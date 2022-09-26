@@ -1,4 +1,4 @@
-cl
+clear all;
 close all;
 clc;
 
@@ -13,20 +13,20 @@ N= Nc * f/fs; % length of signal
 
 %generate signal reference
 refsig = zeros(N,1);
-tempref = zeros(Nc,1) % signal tranfers
-tempref(1,1)= 1;
+ref= zeros(Nc,1) % signal tranfers
+ref(1,1)= 1;
 
 % time of the light wave flighting from the object to the imaging sensor
 shiftime = 10;
 
 %generate signal object
 objsig = zeros(N,1);
-tempobj = zeros(Nc,1)
-tempobj (1+shiftime: k+shiftime)=1;
+obj = zeros(Nc,1)
+obj (1+shiftime: k+shiftime)=1;
 
 for i= 1:f/fs
-    refsig((i-1)*Nc+1:i*Nc) = tempref(:,1);
-    objsig((i-1)*Nc+1:i*Nc) = tempobj(:,1);
+    refsig((i-1)*Nc+1:i*Nc) = ref(:,1);
+    objsig((i-1)*Nc+1:i*Nc) = obj(:,1);
 end
 
 % for i= 1:N
@@ -90,25 +90,25 @@ legend('ref','obj')
 
 
 cvx_begin
-    variable ref(N);
-    minimize (norm(ref,1));
+    variable xp_ref(N);
+    minimize (norm(xp_ref,1));
     subject to
-    A*ref==outputref;
+    A*xp_ref==outputref;
 cvx_end
 
 % obj = OrthogonalMatchingPursuit(A,20,outputobj);
 
 cvx_begin
-    variable obj(N);
-    minimize (norm(obj,1));
+    variable xp_obj(N);
+    minimize (norm(xp_obj,1));
     subject to
-    A*obj==outputobj; 
+    A*xp_obj==outputobj; 
 
 %     norm(A*obj-outputobj,2) <= eps
 %     minimize (norm(A*obj-outputobj,2)+0.01*norm(obj,1));
 cvx_end
 
-diff = objsig - obj;
+diff = objsig - xp_obj;
 recovery_error = norm(diff) / norm(objsig);
 fprintf('recovery error: %0.4f\n', recovery_error);
 
