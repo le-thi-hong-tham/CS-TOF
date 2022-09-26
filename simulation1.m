@@ -1,4 +1,4 @@
-clear all;
+cl
 close all;
 clc;
 
@@ -29,14 +29,20 @@ for i= 1:f/fs
     objsig((i-1)*Nc+1:i*Nc) = tempobj(:,1);
 end
 
-for i= 1:N
-    t(i) = (i-1)/(f*Nc);
-end
+% for i= 1:N
+%     t(i) = (i-1)/(f*Nc);
+% end
 
 figure(1);
-plot(t,refsig,'linewidth',2)
+% plot(t,refsig,'linewidth',2)
+plot(refsig);
+hold on
+plot(objsig)
 ylim([-0.2 1.2]);
+xlabel('sample');
+ylabel('Amplitude');
 
+%generate encode signal
 Phi = randi([0 1],N,N);
 y=Phi*refsig;
 figure(2);
@@ -63,7 +69,10 @@ figure(3)
 plot(outputref);
 hold on
 plot(outputobj);
+xlabel('sample');
+ylabel('Intensity');
 title('Measurement vector');
+legend('ref','obj')
 
 % %Adding some measurement noise.
 % SNR=15;
@@ -108,6 +117,7 @@ figure(5)
 plot(ref)
 hold on 
 plot(obj)
+xlabel('sample');
+ylabel('Amplitude');
 title('Reconstructed signal');
 legend('ref','obj')
-
