@@ -114,9 +114,9 @@ fprintf('recovery error: %0.4f\n', recovery_error);
 
 
 figure(5)
-plot(ref)
+plot(xp_ref)
 hold on 
-plot(obj)
+plot(xp_obj)
 xlabel('sample');
 ylabel('Amplitude');
 title('Reconstructed signal');
