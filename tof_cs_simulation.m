@@ -19,11 +19,6 @@ ref(1,1)= 1;
 % time of the light wave flighting from the object to the imaging sensor
 shiftime = 10;
 
-% generate signal object
-objsig = zeros(N,1);
-obj = zeros(Nc,1)
-obj (1+shiftime: k+shiftime)=1;
-
 for i= 1:f/fs
     refsig((i-1)*Nc+1:i*Nc) = ref(:,1);
     
@@ -44,11 +39,8 @@ ylabel('Amplitude');
 Phi = randi([0 1],N,N);
 y=Phi*refsig;
 
-
-
 figure(2);
 plot(y)
-
 
 
 Tk_ref=1;
@@ -82,13 +74,12 @@ for i=1 : M
 end
 
 % Time of flight wave flighting
-tof=10; 
 
-outputobj(M+1:M+tof)= 0;
-outputobj = circshift(outputobj,tof)
+outputobj(M+1:M+shiftime)= 0;
+outputobj = circshift(outputobj,shiftime)
 
-A3=zeros(size(A2,1)+tof,size(A2,2)+tof);
-A3(1+tof:end,1+tof:end)= A2
+A3=zeros(size(A2,1)+shiftime,size(A2,2)+shiftime);
+A3(1+shiftime:end,1+shiftime:end)= A2
 % 
 figure(3)
 plot(outputref);
@@ -124,7 +115,7 @@ cvx_end
 % obj = OrthogonalMatchingPursuit(A,20,outputobj);
 
 cvx_begin
-    variable xp_obj(N+tof);
+    variable xp_obj(N+shiftime);
     minimize (norm(xp_obj,1));
     subject to
     A3*xp_obj==outputobj; 
@@ -146,4 +137,3 @@ xlabel('sample');
 ylabel('Amplitude');
 title('Reconstructed signal');
 legend('ref','obj')
-
