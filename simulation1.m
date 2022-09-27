@@ -108,6 +108,11 @@ cvx_begin
 %     minimize (norm(A*obj-outputobj,2)+0.01*norm(obj,1));
 cvx_end
 
+%Compute error
+diff_ref = refsig - xp_ref;
+recovery_error_ref = norm(diff_ref) / norm(refsig);
+fprintf('recovery error: %0.4f\n', recovery_error_ref);
+
 diff = objsig - xp_obj;
 recovery_error = norm(diff) / norm(objsig);
 fprintf('recovery error: %0.4f\n', recovery_error);
