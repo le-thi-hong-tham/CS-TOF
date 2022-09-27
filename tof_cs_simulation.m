@@ -81,6 +81,7 @@ for i=1 : M
     A2(i,:) = Phi(position_obj(i),:);
 end
 
+% Time of flight wave flighting
 tof=10; 
 
 outputobj(M+1:M+tof)= 0;
