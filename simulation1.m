@@ -2,18 +2,18 @@ clear all;
 close all;
 clc;
 
-f=1000;
-T=1/f;
-fs=50;
-Ts=1/fs;
+f=1000; %frequency of light wave
+T=1/f; %duty cycle of light wave
+fs=50; % rate of camera sensor
+Ts=1/fs; %duty cycle of camera sensor
 k= 1; %sparse level per cycles
 Nc = 100 % number sample per cycles
-M = Nc*f/500; % number tranfers
+M = Nc*f/500; % number tranfers - measuments
 N= Nc * f/fs; % length of signal
 
 %generate signal reference
 refsig = zeros(N,1);
-ref= zeros(Nc,1) % signal tranfers
+ref= zeros(Nc,1) % signal tranfers per cycle
 ref(1,1)= 1;
 
 % time of the light wave flighting from the object to the imaging sensor
@@ -22,16 +22,13 @@ shiftime = 10;
 %generate signal object
 objsig = zeros(N,1);
 obj = zeros(Nc,1)
-obj (1+shiftime: k+shiftime)=1;
+obj (1+shiftime: k+shiftime)=1; 
 
 for i= 1:f/fs
     refsig((i-1)*Nc+1:i*Nc) = ref(:,1);
     objsig((i-1)*Nc+1:i*Nc) = obj(:,1);
 end
 
-% for i= 1:N
-%     t(i) = (i-1)/(f*Nc);
-% end
 
 figure(1);
 % plot(t,refsig,'linewidth',2)
@@ -47,7 +44,6 @@ Phi = randi([0 1],N,N);
 y=Phi*refsig;
 figure(2);
 plot(y)
-
 
 for i=1:M
    position(i,1) = (i-1) *shiftime+1
@@ -88,7 +84,6 @@ legend('ref','obj')
 % title(sprintf('Measurement vector with noise at SNR=%d dB', SNR));
 
 
-
 cvx_begin
     variable xp_ref(N);
     minimize (norm(xp_ref,1));
@@ -108,7 +103,7 @@ cvx_begin
 %     minimize (norm(A*obj-outputobj,2)+0.01*norm(obj,1));
 cvx_end
 
-%Compute error
+%Compute error recovered
 diff_ref = refsig - xp_ref;
 recovery_error_ref = norm(diff_ref) / norm(refsig);
 fprintf('recovery error: %0.4f\n', recovery_error_ref);
