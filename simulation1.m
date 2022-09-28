@@ -19,14 +19,8 @@ ref(1,1)= 1;
 % time of the light wave flighting from the object to the imaging sensor
 shiftime = 10;
 
-%generate signal object
-objsig = zeros(N,1);
-obj = zeros(Nc,1)
-obj (1+shiftime: k+shiftime)=1; 
-
 for i= 1:f/fs
     refsig((i-1)*Nc+1:i*Nc) = ref(:,1);
-    objsig((i-1)*Nc+1:i*Nc) = obj(:,1);
 end
 
 
