@@ -1,8 +1,8 @@
 clear all;
 close all;
-clc;
+% clc;
 
-f=1000; %frequency of light wave
+f=1000; %kHz = 1Mhz frequency of light wave
 f1=1000;
 f2=1250;
 T=1/f; %duty cycle of light wave
@@ -33,14 +33,6 @@ objsig2 = zeros(N,1);
 obj2= zeros(Nc2,1); % signal tranfers per cycle
 obj2(50+shiftime: 50+shiftime)= 2;
 
-% hold on
-% plot(objsig);
-
-% %generate signal object
-% objsig = zeros(N,1);
-% obj = zeros(Nc,1);
-% obj (1+shiftime: 1+shiftime)=1; 
-% obj (3+shiftime,1)=2; 
 for i= 1:f1/fs
     refsig1((i-1)*Nc1+1:i*Nc1) = ref1(:,1);
     objsig1((i-1)*Nc1+1:i*Nc1) = obj1(:,1);
@@ -123,9 +115,7 @@ cvx_begin
     A*xp_ref==outputref;
 cvx_end
 % 
-% % obj = OrthogonalMatchingPursuit(A,20,outputobj);
-% PCR = zeros(2,1); %Reference phase element array
-% PCO = zeros(2,1); %Object phase element array
+
 cvx_begin
     variable xp_obj(N);
     minimize (norm(xp_obj,1));
@@ -137,13 +127,13 @@ cvx_begin
 cvx_end
 % 
 %Compute error recovered
-diff_ref = refsig - xp_ref;
-recovery_error_ref = norm(diff_ref) / norm(refsig);
-fprintf('recovery error: %0.4f\n', recovery_error_ref);
-
-diff = objsig - xp_obj;
-recovery_error = norm(diff) / norm(objsig);
-fprintf('recovery error: %0.4f\n', recovery_error);
+% diff_ref = refsig - xp_ref;
+% recovery_error_ref = norm(diff_ref) / norm(refsig);
+% fprintf('recovery error: %0.4f\n', recovery_error_ref);
+% 
+% diff = objsig - xp_obj;
+% recovery_error = norm(diff) / norm(objsig);
+% fprintf('recovery error: %0.4f\n', recovery_error);
 % 
 % 
 figure(5)
@@ -154,3 +144,46 @@ xlabel('sample');
 ylabel('Amplitude');
 title('Reconstructed signal');
 legend('ref','obj');
+
+t1 = zeros(2,1);
+dem=0;
+for j = 1: length(xp_ref)
+        if(round(xp_ref(j)) == 2)
+            t1(2) = (j-1)/(f1*Nc1);
+            dem=dem+1;
+        end
+        if(round(xp_ref(j)) == 1)
+            t1(1) = (j-1)/(f2*Nc2);
+            dem=dem+1;
+        end
+        if(dem ==2)
+            break;
+        end
+        
+        
+        
+end
+
+t2 = zeros(2,1);
+dem2=0;
+for j = 1: length(xp_obj)
+        if(round(xp_obj(j)) == 2)
+            t2(2) = (j-1)/(f1*Nc1);
+            dem2=dem2+1;
+        end
+        if(round(xp_obj(j)) == 1)
+            t2(1) = (j-1)/(f2*Nc2);
+            dem2=dem2+1;
+        end
+        if(dem2 ==2)
+            break;
+        end        
+end
+
+time_delay = t2(1)-t1(1);
+
+
+LightSpeed = 3*10^8;
+Distance = LightSpeed*time_delay*10^-3;
+fprintf('Measured Distance = %.2fm\n',Distance)
+
